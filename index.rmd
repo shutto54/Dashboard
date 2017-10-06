@@ -1,0 +1,56 @@
+---
+title: "Baseball By Sarah Hutton"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(Lahman)
+library(flexdashboard)
+library(sqldf)
+library(ggplot2)
+
+```
+
+Column {data-width=650}
+-----------------------------------------------------------------------
+
+### Histogram
+
+```{r message=FALSE,warning=FALSE}
+query<-"SELECT salary FROM Salaries"
+
+result<-sqldf(query)
+
+ggplot()+
+  geom_histogram(data=result,aes(x=salary))
+```
+
+Column {data-width=350}
+-----------------------------------------------------------------------
+
+### Time Series
+
+```{r message=FALSE,warning=FALSE}
+query<-"SELECT salary,yearID FROM Salaries"
+result<-sqldf(query)
+
+ggplot()+
+  geom_point(data=result,aes(x=yearID,y=salary))+
+               geom_line(data=result,aes(x=yearID,y=salary))
+```
+
+### Scatterplot
+
+```{r message=FALSE,warning=FALSE}
+query<-"SELECT salary FROM Salaries AS career_HR FROM Batting GROUP BY
+playerID HAVING HR>=10"
+
+result<-sqldf(query)
+
+ggplot()+
+  geom_point(data=result,aes(x=salary,y=career_HR))
+```
+
